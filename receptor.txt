@@ -1,0 +1,10 @@
+title receptor
+.model tiny.codeorg 100h
+begin: jmp short maintemporal db ?;procedimiento principalmain proc near
+;parametros para “conexion”mov ah,00hmov al,11100011b ;9600,no paridad,1bit de paro,8 bits de infor 
+mov dx,00 ;la configuración se aplicará al puerto serie
+int 14h
+;la siguiente función espera un caracterespera: 
+mov dx,0 ;Select COM1:
+mov ah, 2           ;Receive opcodeint 14hmov temporal, al ;guarda el carácter recibido
+mov ah,02h ; función para desplegarmov dl,temporal  ;página 0int 21hjmp espera ;salto para esperar mas caracteres en el receptorfinal: mov ax,4c00hint 21hmain endpend begin

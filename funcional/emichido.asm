@@ -5,11 +5,11 @@ org 100h
 
 begin: jmp short main
 
-colu db 00 ; columna de la pantalla
-rowa db 00 ;fila de la pantalla
+col db 00 ;columna de la pantalla
+row db 00 ;fila de la pantalla
 temporal db ?
 
-bandera db 1h ; 1h mayúscula y 0h minuscula
+bandera db 1h ;1h mayúscula y 0h minuscula
 
 main proc near
      mov ah, 00h
@@ -47,34 +47,59 @@ main proc near
           cmp temporal, 13
                jz finale
 
+          cmp temporal, 9
+               jz etiquetaEspera
+
      mostrarInput:
-          call colocar
+          call colocarInput
           call imprimir
 
-          inc colu
-          cmp colu, 80
+          inc col
+          cmp col, 80
                jnz etiquetaEsperaInput
-          inc rowa
-          mov colu, 0
+          inc row
+          mov col, 0
 
      test ah, 80h ;Check for error
           jnz finale
      jmp etiquetaEsperaInput
+
+     etiquetaEspera:
+          call espera
+          cmp ah, 00h
+               jnz etiquetaEspera
+
+          cmp al, 13
+               jz finale
+
+          cmp al, 9
+               jz etiquetaEsperaInput
+
+     mostrar:
+          call coloca
+          call imprimir
+
+          inc col
+          cmp col, 80
+               jnz etiquetaEspera
+          inc row
+          mov col, 0
+          jmp etiquetaEspera
 
      finale:
           mov ax,4c00h
           int 21h
 main endp
 
-colocar proc near
+colocarInput proc near
      mov ah, 02h ;petición para colocar el cursor
      mov bh, 00 ;pagina 0 (normal)
      mov al, temporal
-     mov dh, rowa ;nuevo  renglon
-     mov dl, colu ;nueva columna
+     mov dh, row ;nuevo  renglon
+     mov dl, col ;nueva columna
      int 10h
      ret
-colocar endp
+colocarInput endp
 
 imprimir proc near
      mov ah, 0ah ; función para desplegar
@@ -92,4 +117,20 @@ esperaInput proc near
      mov temporal, al
      ret
 esperaInput endp
+
+coloca proc near
+     mov ah, 02h ;petición para colocar el cursor
+     mov bh, 00 ;pagina 0 (normal)
+     mov dh, row ;nuevo  renglon
+     mov dl, col ;nueva columna
+     int 10h
+     ret
+coloca endp
+
+espera proc near
+     mov dx, 0 ;recibir :D
+     mov ah, 2
+     int 14h
+     ret
+espera endp
 end begin

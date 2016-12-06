@@ -9,6 +9,8 @@ colu db 00 ; columna de la pantalla
 rowa db 00 ;fila de la pantalla
 temporal db ?
 
+bandera db 1h ; 1h mayúscula y 0h minuscula
+
 main proc near
      mov ah, 00h
      mov al, 11100011b
@@ -18,10 +20,29 @@ main proc near
      etiquetaEsperaInput:
           call esperaInput
 
-          mov dx, 0 ;enviar
-          mov ah, 1
-          mov al, temporal
-          int 14h
+          cmp temporal, 20h
+               je enviarCaracter
+
+          cmp bandera, 1h
+               je mayusculas
+
+          cmp bandera, 0h
+               je minusculas
+
+          mayusculas:
+               and temporal, 11011111B
+               mov bandera, 0h
+               jmp enviarCaracter
+
+          minusculas:
+               or temporal, 00100000B
+               mov bandera,1h
+
+          enviarCaracter:
+               mov dx, 0 ;enviar
+               mov ah, 1
+               mov al, temporal
+               int 14h
 
           cmp temporal, 13
                jz finale

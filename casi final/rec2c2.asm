@@ -2,7 +2,9 @@ title receptor
 .model tiny
 .code
 org 100h
+
 begin: jmp short main
+
 col db 00 ; columna de la pantalla
 row db 00 ;fila de la pantalla
 

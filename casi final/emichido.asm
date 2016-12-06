@@ -2,7 +2,9 @@ title emisor
 .model tiny
 .code
 org 100h
+
 begin: jmp short main
+
 colu db 00 ; columna de la pantalla
 rowa db 00 ;fila de la pantalla
 temporal db ?
@@ -16,13 +18,13 @@ main proc near
      etiquetaEsperaInput:
           call esperaInput
 
-          cmp temporal, 13
-               jz finale
-
           mov dx, 0 ;enviar
           mov ah, 1
           mov al, temporal
           int 14h
+
+          cmp temporal, 13
+               jz finale
 
      mostrarInput:
           call colocar
